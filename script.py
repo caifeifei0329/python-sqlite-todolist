@@ -31,6 +31,10 @@ def delete_todo(todo_id):
 	query = "DELETE FROM todos WHERE id = ?"
 	cursor.execute(query, (todo_id,))
 
+def complete_todo(todo_id):
+	query = "UPDATE todos SET status = 1 WHERE id = ?"
+	cursor.execute(query, (todo_id,))
+
 def save_and_close_db():
 	connection.commit() # Save changes to the database
 	connection.close()
@@ -41,7 +45,7 @@ def main():
 	active = True
 
 	while active:
-		user_input = input("Select option [ 1 - Display todos, 2 - Insert todo, 3 - Update todo, 4 - Delete todo, q - Exit ]:\n")
+		user_input = input("Select option [ 1 - Display todos, 2 - Insert todo, 3 - Update todo, 4 - Delete todo, 5 - Complete todo, q - Exit ]:\n")
 		if user_input == "1":
 			display_todos()
 		elif user_input == "2":
@@ -59,6 +63,15 @@ def main():
 			display_todos()
 			selection_id = input("Enter ID you want to delete:\n")
 			delete_todo(int(selection_id))
+		elif user_input == "5":
+			display_todos()
+			selection_id = input("Enter ID to mark as complete:\n")
+			if check_if_todo_exists(int(selection_id)):
+				complete_todo(selection_id)
+			else:
+				print("Sorry, this ID doesn't exist!\n")
+
+
 		else:
 			active = False
 			
