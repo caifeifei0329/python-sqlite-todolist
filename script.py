@@ -11,6 +11,16 @@ def insert_todo(value):
 	query = "INSERT INTO todos VALUES (NULL, ?, 0)"
 	cursor.execute(query, (value,))
 
+def update_todo(new_name, todo_id):
+	query = "UPDATE todos SET name = ? WHERE id = ?"
+	cursor.execute(query, (new_name, todo_id))
+
+def check_if_todo_exists(todo_id):
+	query = "SELECT count(id) FROM todos WHERE id = ?"
+	cursor.execute(query, (todo_id,))
+	data = cursor.fetchone()[0]
+	return (data != 0)
+
 def display_todos():
 	query = "SELECT * FROM todos"
 	result = cursor.execute(query)
@@ -23,9 +33,27 @@ def save_and_close_db():
 
 def main():
 	create_table()
-	# user_input = input("Write in the todo name: ")
-	# insert_todos(user_input)
-	display_todos()
+
+	active = True
+
+	while active:
+		user_input = input("Select option [ 1 - Display todos, 2 - Insert todo, 3 - Update todo, q - Exit ]:\n")
+		if user_input == "1":
+			display_todos()
+		elif user_input == "2":
+			new_todo = input("Enter new todo:\n")
+			insert_todo(new_todo)
+		elif user_input == "3":
+			display_todos()
+			selection_id = input("Enter ID you want to update:\n")
+			if check_if_todo_exists(int(selection_id)):
+				new_name = input("Enter updated todo:\n")
+				update_todo(new_name, selection_id)
+			else:
+				print("Sorry, this ID doesn't exist!\n")
+		else:
+			active = False
+			
 	save_and_close_db()
 
 if __name__ == '__main__':
