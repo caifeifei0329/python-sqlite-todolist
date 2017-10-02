@@ -7,13 +7,15 @@ def create_table():
 	query = "CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY, name TEXT, status BOOLEAN)"
 	cursor.execute(query)
 
+def display_todos():
+	query = "SELECT * FROM todos"
+	result = cursor.execute(query)
+	for row in result:
+		print(row)
+
 def insert_todo(value):
 	query = "INSERT INTO todos VALUES (NULL, ?, 0)"
 	cursor.execute(query, (value,))
-
-def update_todo(new_name, todo_id):
-	query = "UPDATE todos SET name = ? WHERE id = ?"
-	cursor.execute(query, (new_name, todo_id))
 
 def check_if_todo_exists(todo_id):
 	query = "SELECT count(id) FROM todos WHERE id = ?"
@@ -21,11 +23,13 @@ def check_if_todo_exists(todo_id):
 	data = cursor.fetchone()[0]
 	return (data != 0)
 
-def display_todos():
-	query = "SELECT * FROM todos"
-	result = cursor.execute(query)
-	for row in result:
-		print(row)
+def update_todo(new_name, todo_id):
+	query = "UPDATE todos SET name = ? WHERE id = ?"
+	cursor.execute(query, (new_name, todo_id))
+
+def delete_todo(todo_id):
+	query = "DELETE FROM todos WHERE id = ?"
+	cursor.execute(query, (todo_id,))
 
 def save_and_close_db():
 	connection.commit() # Save changes to the database
@@ -37,7 +41,7 @@ def main():
 	active = True
 
 	while active:
-		user_input = input("Select option [ 1 - Display todos, 2 - Insert todo, 3 - Update todo, q - Exit ]:\n")
+		user_input = input("Select option [ 1 - Display todos, 2 - Insert todo, 3 - Update todo, 4 - Delete todo, q - Exit ]:\n")
 		if user_input == "1":
 			display_todos()
 		elif user_input == "2":
@@ -51,6 +55,10 @@ def main():
 				update_todo(new_name, selection_id)
 			else:
 				print("Sorry, this ID doesn't exist!\n")
+		elif user_input == "4":
+			display_todos()
+			selection_id = input("Enter ID you want to delete:\n")
+			delete_todo(int(selection_id))
 		else:
 			active = False
 			
