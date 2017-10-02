@@ -11,7 +11,12 @@ def display_todos():
 	query = "SELECT * FROM todos"
 	result = cursor.execute(query)
 	for row in result:
-		print(row)
+		print("[" + str(row[0]) + "] - '" + row[1] + "' - Status: " + get_status_message(row[2]))
+
+def get_status_message(status):
+	if status == 0:
+		return "incomplete"
+	return "complete"
 
 def insert_todo(value):
 	query = "INSERT INTO todos VALUES (NULL, ?, 0)"
@@ -70,8 +75,6 @@ def main():
 				complete_todo(selection_id)
 			else:
 				print("Sorry, this ID doesn't exist!\n")
-
-
 		else:
 			active = False
 			
